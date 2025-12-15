@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生命的摆渡：从损耗到希望</title>
+    <style>
+        /* =========================================
+           1. 全局基础设置
+           ========================================= */
+        :root {
+            /* 莫兰迪配色 */
+            --morandi-blue: #88b3c8;
+            --morandi-pink: #d98d94;
+            --morandi-gold: #eebb4d;
+            
+            /* 深色系 (封面用) */
+            --deep-bg: #050a14;
+            --text-white: #f1f5f9;
+            
+            /* 浅色系 (正文用) */
+            --text-main: #2c3e50;
+            --text-body: #444;
+            --bg-color: #ffffff;
+            
+            /* 交互高亮色 */
+            --boat-body: #fceda3; 
+            --boat-glow-color: #fbbf24;
+            --instruction-text: #d97706; 
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: var(--text-main);
+            line-height: 1.8;
+            background-color: var(--bg-color);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        b, strong { color: var(--morandi-pink); }
+        .highlight-data { color: var(--morandi-pink); font-weight: bold; font-size: 1.1em; margin: 0 3px; }
+        .highlight-text { color: var(--morandi-pink); font-weight: bold; }
+
+        /* 内容容器 */
+        .content-container {
+            max-width: 800px; 
+            margin: 20px auto 60px; 
+            padding: 0 20px;
+            font-size: 18px; color: var(--text-body); text-align: justify;
+        }
+        p { margin-bottom: 1.5em; }
+
+        .fade-in-text {
+            opacity: 0; transform: translateY(40px);
+            transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .fade-in-text.visible { opacity: 1; transform: translateY(0); }
+
+        /* 组件标题 */
+        h2.component-title {
+            text-align: center; color: #2c3e50;
+            margin: 40px 0 5px; 
+            font-size: 1.8em; font-weight: bold;
+        }
+        p.component-subtitle {
+            text-align: center; color: #7f8c8d;
+            margin: 0 0 20px; 
+            font-size: 0.95em; letter-spacing: 1px;
+        }
+
+        /* 嵌入组件容器 */
+        .embedded-component {
+            width: 92%; max-width: 1050px; 
+            margin: 20px auto 80px; 
+            background: transparent; border-radius: 0; box-shadow: none; border: none;
+            position: relative; padding-bottom: 20px; overflow: visible;
+        }
+
+        /* =========================================
+           2. 封面部分
+           ========================================= */
+        .cover-section {
+            position: relative; width: 100%; height: 100vh;
+            font-family: "Songti SC", "SimSun", "STSong", "Times New Roman", serif;
+            background: linear-gradient(180deg, #020205 0%, #111827 100%);
+            overflow: hidden; display: flex; justify-content: center; align-items: center; color: var(--text-white);
+        }
+        .cover-section .stars {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(1px 1px at 10% 10%, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1.5px 1.5px at 30% 60%, rgba(255,255,255,0.6), transparent),
+                radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,0.7), transparent),
+                radial-gradient(2px 2px at 90% 80%, rgba(255,255,255,0.5), transparent);
+            background-size: 600px 600px; opacity: 0.5; z-index: 0;
+            animation: star-pulse 8s infinite alternate;
+        }
+        @keyframes star-pulse { 0% { opacity: 0.3; } 100% { opacity: 0.6; } }
+
+        .river-container { position: absolute; bottom: 0; left: 0; width: 100%; height: 45vh; z-index: 2; pointer-events: none; opacity: 0.8; }
+        .cover-waves { position: absolute; width: 100%; height: 100%; bottom: 0; min-height: 100px; }
+        .parallax > use { animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite; }
+        .parallax > use:nth-child(1) { fill: rgba(30, 41, 59, 0.7); animation-delay: -2s; animation-duration: 15s; }
+        .parallax > use:nth-child(2) { fill: rgba(136, 179, 200, 0.2); animation-delay: -3s; animation-duration: 20s; }
+        .parallax > use:nth-child(3) { fill: rgba(255, 255, 255, 0.05); animation-delay: -4s; animation-duration: 25s; }
+        .parallax > use:nth-child(4) { fill: rgba(136, 179, 200, 0.1); animation-delay: -5s; animation-duration: 35s; }
+        @keyframes move-forever { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
+
+        .meteor {
+            position: absolute; height: 1px;
+            background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.8) 50%, rgba(255,255,255,0));
+            width: 0; opacity: 0; transform-origin: left center; z-index: 1;
+            filter: drop-shadow(0 0 3px rgba(136, 179, 200, 0.5));
+        }
+        @keyframes meteor-slide {
+            0% { width: 0; opacity: 0; transform: translate(0, 0) rotate(-35deg); }
+            10% { width: 150px; opacity: 1; }
+            80% { opacity: 1; }
+            100% { width: 0; opacity: 0; transform: translate(-400px, 280px) rotate(-35deg); }
+        }
+
+        .content-layer { position: relative; z-index: 10; width: 100%; max-width: 1200px; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 0 40px; padding-bottom: 10vh; }
+        .bg-number { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 28vw; font-family: 'Times New Roman', serif; font-weight: bold; color: rgba(255,255,255,0.02); z-index: -1; white-space: nowrap; letter-spacing: -10px; pointer-events: none; }
+        .title-container-cover { position: relative; border-left: 1px solid rgba(255,255,255,0.3); padding-left: 40px; }
+        .sub-header { font-size: clamp(1rem, 1.5vw, 1.5rem); color: var(--morandi-blue); font-weight: 400; margin-bottom: 20px; letter-spacing: 2px; opacity: 0; animation: fade-in-up 1.2s ease forwards 0.5s; }
+        .sub-header .num { font-family: "Helvetica Neue", serif; font-weight: bold; font-size: 1.2em; color: var(--text-white); margin: 0 5px; }
+        .main-header { font-size: clamp(2.5rem, 5vw, 4.5rem); color: var(--text-white); font-weight: 700; line-height: 1.2; opacity: 0; animation: fade-in-up 1.2s ease forwards 0.8s; text-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .highlight-red { color: var(--morandi-pink); position: relative; display: inline-block; }
+        .main-header::after { content: ''; position: absolute; width: 200px; height: 200px; background: radial-gradient(circle, rgba(136, 179, 200, 0.1) 0%, transparent 70%); top: 50%; left: 0; transform: translate(-50%, -50%); z-index: -1; pointer-events: none; }
+        @keyframes fade-in-up { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .scroll-indicator {
+            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center;
+            opacity: 0; animation: fade-in 1s ease forwards 2s; cursor: pointer; z-index: 20; mix-blend-mode: overlay;
+        }
+        .scroll-text { font-size: 0.8rem; letter-spacing: 4px; color: rgba(255,255,255,0.8); margin-bottom: 10px; text-transform: uppercase; }
+        .scroll-line { width: 1px; height: 50px; background: rgba(255,255,255,0.3); position: relative; overflow: hidden; }
+        .scroll-line::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 50%; background: #fff; animation: drop 2s infinite; }
+        @keyframes drop { 0% { top: -50%; opacity: 0; } 50% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+        @keyframes fade-in { to { opacity: 1; } }
+
+
+        /* =========================================
+           3. 正文部分通用头图
+           ========================================= */
+        .content-header-section {
+            position: relative; width: 100%; height: 280px; /* 减小高度 */
+            background: #fff; display: flex; align-items: center; justify-content: center;
+            overflow: hidden; flex-direction: column; 
+            margin-bottom: 0; /* 移除底部外边距，紧贴下方内容 */
+        }
+        .ch-title-container {
+            position: relative; max-width: 1000px; width: 90%; padding: 20px 0; margin-bottom: 20px;
+        }
+        .ch-title-text {
+            font-size: 2.2em; font-weight: bold; color: rgba(0,0,0,0.05); margin: 0; position: relative; z-index: 1; letter-spacing: 2px;
+        }
+        .ch-title-reveal {
+            position: absolute; top: 0; left: 0; height: 100%; width: 0%;
+            overflow: hidden; white-space: nowrap; animation: revealText 3s linear forwards; z-index: 2;
+        }
+        .ch-title-reveal span {
+            display: inline-block; font-size: 2.2em; font-weight: bold; color: #000; letter-spacing: 2px; text-shadow: none;
+        }
+        
+        .ch-boat-wrapper {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; 
+            z-index: 5; /* 确保在文字之上 */
+        }
+        .ch-boat {
+            position: absolute; 
+            top: 65%; /* 稍微下调，防止帆被顶部裁剪 */
+            left: 0%; /* 初始位置 */
+            transform: translate(-100%, -50%); /* 初始状态在屏幕左侧外 */
+            width: 80px; height: 80px; 
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1));
+            animation: sailInfinite 10s linear infinite; 
+        }
+        .ch-boat svg { width: 100%; height: 100%; fill: #333; animation: rock 2.5s ease-in-out infinite; }
+
+        @keyframes revealText { 0% { width: 0%; } 100% { width: 100%; } }
+        /* 恢复原文档的从左到右运动逻辑，但设为循环 */
+        @keyframes sailInfinite {
+            0% { left: 0%; }
+            100% { left: 115%; }
+        }
+        @keyframes rock { 0%, 100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(3deg) translateY(-4px); } }
+
+        /* =========================================
+           4. 组件样式
+           ========================================= */
+        /* Flowchart */
+        .fc-header-section { text-align: center; padding: 40px 20px 0px; background: transparent; margin-bottom: 40px; }
+        .fc-header-section h2 { color: #2c3e50; margin: 0 0 10px 0; font-size: 2.0em; font-weight: 800; }
+        .fc-header-section p { color: #666; margin: 0; font-size: 1.1em; text-align: center; }
+        .timeline-container { max-width: 1000px; margin: 0 auto; position: relative; padding: 30px 0 80px; }
+        #road-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .road-path { fill: none; stroke: #bdc3c7; stroke-width: 6; stroke-dasharray: 20, 15; stroke-linecap: round; opacity: 0.6; }
+        #ambulance-car {
+            position: absolute; top: 0; left: 0; width: 100px; height: 100px; font-size: 80px; line-height: 100px;
+            text-align: center; z-index: 10; will-change: transform; display: none; transition: transform 0.1s linear;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
+        }
+        .step-card {
+            position: relative; width: 35%; margin-bottom: 30px; opacity: 0; transform: translateY(80px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out; background: transparent; z-index: 1;
+        }
+        .step-number {
+            position: absolute; top: -15px; background: none; color: #000; text-align: left;
+            line-height: 1; font-weight: 900; font-size: 3em; opacity: 0.2;
+        }
+        .step-card.left { margin-left: 2%; } .step-card.left .step-number { left: 0; }
+        .step-card.right { margin-left: 63%; } .step-card.right .step-number { left: 0; }
+        .step-card.visible { opacity: 1; transform: translateY(0); }
+        .step-image {
+            width: 100%; margin-bottom: 15px; height: 140px; object-fit: contain; display: block;
+            background: transparent; transition: transform 0.3s ease; mix-blend-mode: multiply;
+        }
+        .step-image:hover { transform: translateY(-3px); }
+        .step-title { font-size: 1.5em; color: #2c3e50; font-weight: 800; margin-bottom: 8px; position: relative; z-index: 2; }
+        .step-desc { font-size: 1em; color: #444; text-align: justify; line-height: 1.7; }
+        .source-note { position: absolute; bottom: 20px; left: 20px; font-size: 12px; color: #95a5a6; z-index: 1; font-style: italic; }
+
+        /* Poker */
+        .poker-section { position: relative; width: 100%; max-width: 900px; margin: 0 auto; padding-bottom: 40px; }
+        .poker-container { position: relative; height: 450px; width: 100%; display: flex; justify-content: center; align-items: center; }
+        .pk-card {
+            position: absolute; width: 240px; height: 340px; background-color: #e0f0e9; border-radius: 15px;
+            box-shadow: -2px 2px 10px rgba(0,0,0,0.1); transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer; overflow: hidden; display: flex; flex-direction: column; transform-origin: bottom center; border: 2px solid #fff;
+        }
+        .pk-header { display: flex; align-items: center; justify-content: center; padding: 15px; background: rgba(255,255,255,0.6); border-bottom: 1px solid rgba(255,255,255,0.5); z-index: 2; }
+        .pk-icon { width: 30px; height: 30px; margin-right: 8px; fill: #f5b7b1; }
+        .pk-title { font-size: 1.1em; font-weight: bold; color: #5d7a78; text-align: center; }
+        .pk-content { padding: 20px; font-size: 0.9em; color: #444; line-height: 1.6; opacity: 0; transition: opacity 0.3s; overflow-y: auto; position: relative; z-index: 2; }
+        .pk-content ul { padding-left: 20px; margin: 0; list-style-type: disc; }
+        .pk-content li { margin-bottom: 8px; }
+        .pk-card.active {
+            width: 400px; height: 420px; z-index: 100 !important; transform: translate(0, -20px) rotate(0deg) !important;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2); background: linear-gradient(135deg, #f0fbf9 0%, #fff 100%);
+        }
+        .pk-card.active .pk-content { opacity: 1; }
+        .pk-card.active .pk-title { font-size: 1.3em; color: #2c3e50; }
+        .pk-source { position: absolute; bottom: 0; left: 20px; font-size: 12px; color: #95a5a6; font-style: italic; }
+        .pk-bg-icon {
+            position: absolute; bottom: 10px; right: 10px; width: 150px; height: 150px; fill: none;
+            stroke: #a8d8d1; stroke-width: 1.5; opacity: 0.3; pointer-events: none; z-index: 1; transition: all 0.5s ease;
+        }
+        .pk-card.active .pk-bg-icon { width: 180px; height: 180px; opacity: 0.15; }
+        .pk-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8);
+            z-index: 90; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .pk-overlay.show { opacity: 1; pointer-events: auto; }
+
+        /* --- Notice (修复版：实心蓝圆) --- */
+        .notice-container {
+            width: 100%; max-width: 900px; height: 600px;
+            background: transparent; border-radius: 0; box-shadow: none; border: none;
+            display: flex; overflow: hidden; position: relative; margin: 0 auto; 
+        }
+        .nt-left-panel {
+            width: 45%; background: transparent; border-right: none;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; 
+            position: relative; padding: 40px 20px; z-index: 2;
+        }
+        .nt-right-panel {
+            width: 55%; padding: 30px; display: flex; align-items: center; justify-content: center; 
+            background-color: transparent; overflow: hidden;
+        }
+        .nt-gear-wrapper {
+            position: relative; width: 260px; height: 260px;
+            margin-bottom: 20px; margin-top: 50px; flex-shrink: 0;
+        }
+        /* 改为纯色实心圆，去除 SVG 背景干扰 */
+        .nt-gear {
+            width: 100%; height: 100%; position: absolute; top: 0; left: 0;
+            background-color: #3498db; /* 实心蓝色 */
+            border-radius: 50%; /* 圆形 */
+            transition: transform 1.5s cubic-bezier(0.645, 0.045, 0.355, 1.000);
+            cursor: pointer; z-index: 1;
+            /* 可选：加个阴影让它更有立体感 */
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+        /* nt-gear-filler 现在可以不需要了，或者作为装饰圈 */
+        .nt-gear-filler {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 140px; height: 140px; 
+            border: 2px dashed rgba(255,255,255,0.3); /* 装饰线 */
+            border-radius: 50%; z-index: 2; pointer-events: none;
+        }
+        .nt-gear-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 60px; height: 60px; background: #2980b9; border-radius: 50%; z-index: 3;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .nt-year-point {
+            position: absolute; width: 60px; height: 60px; background: #fff;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: #3498db; font-size: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); cursor: pointer; z-index: 5;
+            transition: transform 1.5s cubic-bezier(0.645, 0.045, 0.355, 1.000), background 0.3s;
+        }
+        .nt-year-point.active {
+            background: #2c3e50; color: #fff; border: 3px solid #f1c40f; z-index: 10;
+        }
+        .nt-title-box { text-align: center; z-index: 2; width: 100%; flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-start; padding-top: 10px; }
+        .nt-title-year { font-size: 3.5em; font-weight: 900; color: rgba(52, 152, 219, 0.15); line-height: 1; }
+        .nt-title-text { font-size: 1.1em; font-weight: bold; color: #2c3e50; padding: 0 10px; }
+        .nt-source-note { position: absolute; bottom: 10px; left: 0; width: 100%; text-align: center; font-size: 11px; color: #95a5a6; font-style: italic; padding: 0 10px; }
+        .nt-bubble-box { background: #fff; padding: 30px; border-radius: 20px; width: 100%; height: 80%; position: relative; opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .nt-bubble-box.show { opacity: 1; transform: translateY(0); }
+        .nt-bubble-box::before { display: none; }
+        .nt-scroll-content { height: 100%; overflow-y: auto; padding-right: 10px; display: flex; flex-direction: column; }
+        .nt-scroll-content::-webkit-scrollbar { width: 5px; }
+        .nt-scroll-content::-webkit-scrollbar-thumb { background-color: #ddd; border-radius: 3px; }
+        .nt-content-body { font-size: 15px; line-height: 1.7; color: #444; text-align: justify; margin: auto 0; }
+        .nt-section-title { font-weight: bold; color: #2c3e50; margin-bottom: 0.5em; display: block; }
+
+        /* Map & Charts */
+        .map-interaction-container {
+            max-width: 1100px; margin: 40px auto 60px; position: relative; border-radius: 16px; padding: 20px;
+        }
+        .glass-bubble {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80%; max-width: 500px; padding: 30px;
+            background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); z-index: 10;
+            color: #333; font-size: 16px; line-height: 1.8; text-align: justify;
+            transition: all 0.6s ease; pointer-events: none;
+        }
+        .glass-bubble strong { color: var(--morandi-pink); font-weight: bold; }
+        .map-interaction-container:hover .glass-bubble { opacity: 0; transform: translate(-50%, -60%) scale(0.95); }
+
+        .chart-wrapper { width: 95%; max-width: 1000px; margin: 60px auto; padding: 20px; box-sizing: border-box; background: #fff; position: relative; }
+        .chart-content { position: relative; padding-top: 30px; }
+        .grid-background { position: absolute; top: 30px; bottom: 0; left: 280px; right: 20px; z-index: 0; border-left: 1px solid #ccc; border-bottom: 1px solid #ccc; }
+        .grid-line { position: absolute; top: 0; bottom: 0; border-left: 1px dashed #eee; }
+        .grid-label { position: absolute; top: -25px; transform: translateX(-50%); font-size: 11px; color: #999; }
+        .mode-section { margin-bottom: 30px; position: relative; z-index: 1; }
+        .mode-header-block { padding-left: 20px; margin-bottom: 15px; border-left: 4px solid #e74c3c; display: flex; align-items: center; }
+        .header-text-container { width: 270px; display: flex; align-items: baseline; gap: 10px; flex-shrink: 0; padding-right: 5px; box-sizing: border-box; }
+        .mode-title { font-size: 18px; font-weight: bold; color: #2c3e50; white-space: nowrap; }
+        .mode-desc { font-size: 13px; color: #666; background: #f0f0f0; padding: 4px 8px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mode-total { font-size: 13px; color: #fff; background: #e9958d; padding: 4px 12px; border-radius: 12px; font-weight: bold; white-space: nowrap; box-shadow: 1px 1px 3px rgba(0,0,0,0.1); }
+        .bar-row { display: flex; align-items: center; margin-bottom: 12px; height: 24px; }
+        .bar-name-col { width: 270px; text-align: right; padding-right: 15px; font-size: 12px; color: #555; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 24px; box-sizing: border-box; }
+        .bar-visual-area { flex: 1; position: relative; height: 100%; display: flex; align-items: center; padding-left: 10px; }
+        .bar { height: 18px; border-radius: 0 4px 4px 0; }
+        .bar-value { margin-left: 8px; font-size: 11px; color: #666; font-weight: bold; }
+        .group-1 .bar { background-color: #dbecebc4; border: 1px solid #bce0dd; } .group-1 .mode-header-block { border-left-color: #bce0dd; }
+        .group-2 .bar { background-color: #d3dce1; border: 1px solid #bdcbd3; } .group-2 .mode-header-block { border-left-color: #bdcbd3; }
+        .group-3 .bar { background-color: #fcece9; border: 1px solid #f2dcd8; } .group-3 .mode-header-block { border-left-color: #f2dcd8; }
+        .group-4 .bar { background-color: #f7dcd9; border: 1px solid #eebdb8; } .group-4 .mode-header-block { border-left-color: #eebdb8; }
+
+        .ratio-panel-wrapper { max-width: 1200px; margin: 80px auto; background: #fff; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.05); display: flex; overflow: hidden; border: 1px solid #f0f0f0; }
+        .rp-left { flex: 3; padding: 20px; border-right: 1px solid #f9f9f9; background: #fff; }
+        .rp-right { flex: 2; background: linear-gradient(135deg, #fdfbfb 0%, #f7f9fa 100%); padding: 40px 30px; display: flex; flex-direction: column; }
+        .chart-internal-title { font-size: 18px; font-weight: 700; color: var(--text-main); margin-bottom: 20px; line-height: 1.4; text-align: left; }
+        .chart-internal-source { font-size: 12px; color: #999; margin-top: 15px; text-align: right; font-style: normal; line-height: 1.5; }
+        .organ-selector { display: flex; gap: 10px; margin-bottom: 30px; }
+        .os-btn { flex: 1; padding: 12px 0; text-align: center; background: #fff; border: 1px solid #eee; border-radius: 8px; color: #888; cursor: pointer; transition: all 0.3s ease; font-size: 14px; font-weight: 600; }
+        .os-btn:hover { border-color: var(--morandi-blue); color: var(--morandi-blue); }
+        .os-btn.active { background: var(--morandi-blue); color: #fff; border-color: var(--morandi-blue); box-shadow: 0 4px 15px rgba(136, 179, 200, 0.3); }
+        .anim-stage { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 300px; }
+        .placeholder-hint { text-align: center; color: #666; display: flex; flex-direction: column; align-items: center; gap: 10px; font-weight: 500; }
+        .active-content { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .icon-box { width: 100px; height: 100px; margin-bottom: 20px; opacity: 0; transform: translateY(15px); transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .icon-box.show { opacity: 1; transform: translateY(0); }
+        .icon-box svg { width: 100%; height: 100%; fill: none; stroke: var(--text-main); stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+        .ratio-text-group { text-align: center; margin-bottom: 25px; }
+        .ratio-desc { font-size: 12px; color: #999; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+        .ratio-big { font-size: 48px; font-weight: 800; color: var(--morandi-pink); line-height: 1; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        .bars-container { display: flex; align-items: flex-end; justify-content: center; gap: 50px; width: 100%; height: 160px; border-bottom: 1px solid #e0e0e0; padding-bottom: 10px; }
+        .bar-group { display: flex; flex-direction: column; align-items: center; width: 50px; }
+        .bar-visual { width: 100%; border-radius: 6px 6px 0 0; transition: height 1s cubic-bezier(0.22, 1, 0.36, 1); height: 0; }
+        .bar-visual.transplant { background: var(--morandi-blue); }
+        .bar-visual.waiting { background: var(--morandi-pink); box-shadow: 0 -5px 20px rgba(217, 141, 148, 0.3); }
+        .bar-label { margin-top: 10px; font-size: 12px; color: #888; }
+        .bar-val { font-weight: bold; font-size: 14px; margin-bottom: 6px; color: #555; }
+        .chart-container { margin: 4rem 0; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); background: #fff; padding: 10px; border: 1px solid #f0f0f0; }
+
+        /* Finale Interactive */
+        .interactive-section { position: relative; height: 100vh; width: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; background: #ffffff; color: var(--text-main); margin-top: 80px; }
+        .particles-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+        .particle { position: absolute; border-radius: 50%; opacity: 0; mix-blend-mode: multiply; filter: blur(1px); }
+        @keyframes particleFloat {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            20% { opacity: 0.8; transform: translateY(-20px) scale(1); }
+            50% { opacity: 0.5; transform: translateY(-100px) scale(0.8); box-shadow: 0 0 15px 4px rgba(255,255,255,0.4); }
+            100% { transform: translateY(-120vh) scale(0.2); opacity: 0; }
+        }
+        .river-wrapper { position: absolute; bottom: 0; left: 0; width: 100%; height: 60%; z-index: 1; transition: transform 3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .waves { position: absolute; width: 100%; height: 100%; bottom: 0; }
+        @keyframes move-wave { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
+        .interactive-container { width: 85%; max-width: 800px; text-align: center; position: relative; z-index: 10; padding-bottom: 20vh; }
+        .quote-section { transition: opacity 1s ease, transform 1s ease; }
+        .quote-text { font-size: 1.8rem; line-height: 1.6; font-weight: 700; margin-bottom: 2rem; color: #2c3e50; text-shadow: 0 10px 30px rgba(255,255,255,0.8); }
+        .author { font-size: 0.95rem; color: #64748b; margin-bottom: 3rem; letter-spacing: 1px; font-weight: 500; }
+        .river-track { position: relative; width: 100%; height: 4px; background: linear-gradient(90deg, rgba(251, 191, 36, 0.1) 0%, rgba(251, 191, 36, 0.5) 50%, rgba(251, 191, 36, 0.1) 100%); margin: 0 auto; border-radius: 4px; box-shadow: 0 0 10px rgba(251, 191, 36, 0.3); }
+        .boat-container { position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 70px; height: 70px; cursor: grab; display: flex; justify-content: center; align-items: center; z-index: 20; }
+        .boat-container:active { cursor: grabbing; }
+        .boat-icon { width: 48px; height: 48px; fill: var(--boat-body); filter: drop-shadow(0 0 8px var(--boat-glow-color)); position: relative; z-index: 2; }
+        .boat-success-glow { position: absolute; width: 10px; height: 10px; background: #fff; border-radius: 50%; box-shadow: 0 0 30px 15px var(--boat-glow-color); opacity: 0; transform: scale(0.5); transition: all 0.8s ease-out; z-index: 1; }
+        .instruction { margin-top: 2rem; font-size: 0.95rem; color: var(--instruction-text); letter-spacing: 3px; font-weight: bold; animation: pulseText 2s infinite; }
+        @keyframes pulseText { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        .content-section { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -40%); width: 100%; opacity: 0; pointer-events: none; transition: all 2s ease 1s; }
+        .main-text { font-size: 1.3rem; line-height: 2.2; color: #444; text-align: center; font-weight: 300; }
+        .highlight-text-final { color: var(--morandi-pink); font-weight: bold; }
+        .fade-out { opacity: 0; transform: translateY(-20px); pointer-events: none; }
+        .river-recede { transform: translateY(100%); }
+        .visible { opacity: 1; transform: translate(-50%, -50%); pointer-events: auto; }
+        .glow-active { opacity: 1 !important; transform: scale(2.5) !important; }
+
+        /* Footer */
+        .footer-section { background-color: #ffffff; color: #8c8c8c; font-size: 13px; line-height: 1.8; padding: 50px 20px 80px; position: relative; z-index: 10; text-align: left; }
+        .footer-wrapper { max-width: 800px; margin: 0 auto; }
+        .ref-section { margin-bottom: 50px; }
+        .ref-title { font-weight: 700; color: #666; margin-bottom: 15px; font-size: 14px; }
+        .ref-list { list-style: none; padding: 0; margin: 0; }
+        .ref-list li { margin-bottom: 8px; word-break: break-all; padding-left: 2em; text-indent: -2em; }
+        .ref-list a { color: inherit; text-decoration: none; border-bottom: 1px dotted #ccc; transition: color 0.3s; }
+        .ref-list a:hover { color: var(--morandi-blue); border-bottom-color: var(--morandi-blue); }
+        .credits-section { border-top: 1px solid #f0f0f0; padding-top: 30px; }
+        .credits-section p { margin-bottom: 5px; }
+        .team-info { margin-top: 15px; }
+        .final-thanks { margin-top: 40px; font-size: 14px; color: var(--morandi-pink); font-weight: 500; letter-spacing: 1px; }
+
+        @media (max-width: 900px) {
+            .header-section, .content-header-section { height: 250px; }
+            .title-text, .title-reveal span, .ch-title-text, .ch-title-reveal span { font-size: 1.5em; white-space: normal; }
+            .title-reveal, .ch-title-reveal { white-space: normal; }
+            .glass-bubble { width: 90%; }
+            .chart-wrapper { padding: 10px; }
+            .grid-background { left: 150px; }
+            .header-text-container, .bar-name-col { width: 140px; }
+            .ratio-panel-wrapper { flex-direction: column; }
+            .rp-left { border-right: none; border-bottom: 1px solid #eee; height: 500px; }
+            .fc-header-section h2 { font-size: 1.6em; }
+            .poker-container { height: auto; flex-direction: column; align-items: center; padding-top: 20px;}
+            .pk-card { position: relative; width: 90%; height: auto; margin-bottom: 15px; transform: none !important; left: auto !important; top: auto !important; }
+            .pk-content { opacity: 1; display: block; max-height: 0; overflow: hidden; padding: 0 20px; transition: max-height 0.3s ease-out;}
+            .pk-card.active { width: 90%; height: auto; transform: none !important;}
+            .pk-card.active .pk-content { max-height: 500px; padding: 20px; }
+            .step-card { width: 85%; margin-left: 7.5% !important; margin-bottom: 100px; }
+            .step-card .step-number { left: 0; top: -30px; }
+            #road-svg, #ambulance-car { display: none; }
+            .nt-container { flex-direction: column; height: auto; }
+            .nt-left-panel, .nt-right-panel { width: 100%; border: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =========================================
+         第一部分：封面
+         ========================================= -->
+    <div id="part-cover" class="cover-section">
+        <div class="stars"></div>
+        <div class="bg-number">190,000</div>
+        <div id="meteors-container"></div>
+        <div id="particles-container"></div>
+        <div class="river-container">
+            <svg class="cover-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                <defs><path id="gentle-wave-cover" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" /></defs>
+                <g class="parallax">
+                    <use xlink:href="#gentle-wave-cover" x="48" y="0" />
+                    <use xlink:href="#gentle-wave-cover" x="48" y="3" />
+                    <use xlink:href="#gentle-wave-cover" x="48" y="5" />
+                    <use xlink:href="#gentle-wave-cover" x="48" y="7" />
+                </g>
+            </svg>
+        </div>
+        <div class="content-layer">
+            <div class="title-container-cover">
+                <div class="sub-header">累计捐献器官数量突破 <span class="num">190,000</span> 个</div>
+                <div class="main-header">器官等待名单，<br>怎么还是<span class="highlight-red">这么长？</span></div>
+            </div>
+        </div>
+        <div class="scroll-indicator" onclick="document.getElementById('part-sec01').scrollIntoView({behavior: 'smooth'})">
+            <div class="scroll-text">向下滚动，开始阅读</div>
+            <div class="scroll-line"></div>
+        </div>
+    </div>
+
+
+    <!-- =========================================
+         第二部分：现状与流程
+         ========================================= -->
+    <div id="part-sec01">
+        <section class="content-header-section">
+            <div class="ch-title-container">
+                <h1 class="ch-title-text">01 | 在到达手术台之前：器官的漫长旅程与损耗</h1>
+                <div class="ch-title-reveal">
+                    <span>01 | 在到达手术台之前：器官的漫长旅程与损耗</span>
+                </div>
+                <div class="ch-boat-wrapper">
+                    <!-- 小船：无限循环动画 + 位置下调 -->
+                    <div class="ch-boat">
+                        <svg viewBox="0 0 100 100">
+                            <path d="M 10,75 L 90,75 L 75,95 L 25,95 Z" />
+                            <path d="M 50,70 L 50,5 L 90,70 Z" />
+                            <path d="M 45,70 L 45,20 L 20,70 Z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-container">
+            <p class="fade-in-text">根据中国器官移植发展基金会组织编写的《中国器官捐献和移植发展报告（2023）》（以下简称《报告》），2023 年获取器官 20,584 个，而全国器官利用率为 96.55%，意味着 2023 年一年有约 710 个器官被浪费。</p>
+            <p class="fade-in-text" style="font-weight: bold; color: #D98D94;">器官从捐献到移植的流程中哪些环节会带来器官浪费？又有哪些损耗可以避免？</p>
+            <p class="fade-in-text">一个器官从离开供体到找到新的主体，需要经历供体评估、匹配分配、获取手术、低温保存、快速运输和最终移植等七大流程。在“捐献”到“移植”的这条复杂链条上，任何一个环节的延误、失误或瓶颈，都可能导致器官报废，而不是流向需要它的患者。</p>
+            <p class="fade-in-text">这条“生命流转链”的运转，离不开四大关键主体——器官捐献者、器官移植中心、器官接收者、器官获取组织，而其中“器官获取组织 Organ Procurement Organizations（以下简称 OPO）”，是串联起整个流程的“轴心”。</p>
+        </section>
+
+        <div class="embedded-component fade-in-text" id="flowchart-root">
+            <div class="fc-header-section">
+                <h2>一图读懂中国器官捐献与分配流程</h2>
+                <p>🚑 请慢慢向下滚动，跟随救护车行驶在生命通道上</p>
+            </div>
+            <div class="timeline-container" id="timeline">
+                <svg id="road-svg"><path id="road-path" class="road-path" d="" /></svg>
+                <div id="ambulance-car">🚑</div>
+                <div class="step-card left">
+                    <div class="step-number">1</div>
+                    <img src="step1.png" alt="报名登记" class="step-image">
+                    <div class="step-title">报名登记</div>
+                    <div class="step-desc">报名登记可分生前报名登记和逝世后捐献申请两类。临床上脑死亡或不可逆脑损伤方可被视为潜在器官捐献者。</div>
+                </div>
+                <div class="step-card right">
+                    <div class="step-number">2</div>
+                    <img src="step2.png" alt="捐献评估" class="step-image">
+                    <div class="step-title">捐献评估</div>
+                    <div class="step-desc">申请评估专家对捐献者情况进行评估与维护。人体器官捐献协调员评估亲属捐献意愿的真实性和可行性，协助亲属办理器官捐献相关手续。</div>
+                </div>
+                <div class="step-card left">
+                    <div class="step-number">3</div>
+                    <img src="step3.png" alt="捐献确认" class="step-image">
+                    <div class="step-title">捐献确认</div>
+                    <div class="step-desc">捐献者直系亲属或委托人签字确认登记表与知情同意书，器官协调员或红十字工作人员见证该过程，并查看能说明捐献者与直系亲属关系的证明材料原件。</div>
+                </div>
+                <div class="step-card right">
+                    <div class="step-number">4</div>
+                    <img src="step4.png" alt="器官获取" class="step-image">
+                    <div class="step-title">器官获取</div>
+                    <div class="step-desc">心脏是对缺血损伤最敏感的器官，首先获取，其次是小肠，再次是肝脏和胰腺，最后是肾脏。完毕后征得家属同意对遗体恢复外观并进行合理处理。</div>
+                </div>
+                <div class="step-card left">
+                    <div class="step-number">5</div>
+                    <img src="step5.png" alt="器官分配" class="step-image">
+                    <div class="step-title">器官分配</div>
+                    <div class="step-desc">我国严格使用中国人体器官分配与共享计算机系统（COTRS）实施器官分配。COTRS系统由器官移植等待者预约名单和器官捐献者登记及器官匹配系统两部分组成。COTRS会根据国家规定的分配原则进行公平公正的自动分配。</div>
+                </div>
+                <div class="step-card right">
+                    <div class="step-number">6</div>
+                    <img src="step6.png" alt="运输" class="step-image">
+                    <div class="step-title">保存和运输</div>
+                    <div class="step-desc">分秒必争，低温冷藏，快速转运。器官获取后尽快对器官进行打包、标识和运输。</div>
+                </div>
+                <div class="step-card left">
+                    <div class="step-number">7</div>
+                    <img src="step7.png" alt="移植" class="step-image">
+                    <div class="step-title">器官移植</div>
+                    <div class="step-desc">到达手术台，生命得以延续。</div>
+                </div>
+                <div class="source-note">根据《中国公民逝世后器官捐献流程和规范（2019版）》《移植器官质量与安全指南（第6版）》绘制</div>
+            </div>
+        </div>
+
+        <section class="content-container">
+             <p class="fade-in-text">我国实行全国统一的人体器官计算机分配，遵循“医疗需要、公平公开”原则。<b>分配机制依据病情紧急程度与等待时间排序，严格匹配血型并落实儿童优先政策。</b>政策特别明确，捐献者亲属及登记满3年的志愿者享有分配优先权，旨在降低等待死亡风险，提高移植存活率。而不同脏器因其供需压力、生物特性不同，在分配原则上也各有侧重。</p>
+        </section>
+        
+        <div class="embedded-component fade-in-text" id="poker-root">
+            <div class="poker-section">
+                <h2 class="component-title">中国人体器官分配与共享基本原则图解</h2>
+                <div class="poker-container" id="poker-container">
+                    <div class="pk-overlay" id="pk-overlay"></div>
+                </div>
+                <div class="pk-source">数据来源：国家卫生健康委员会《中国人体器官分配与共享基本原则和核心政策》；统计时间：2025年11月15日-11月30日</div>
+            </div>
+        </div>
+        
+        <section class="content-container">
+            <p class="fade-in-text">即便供体成功获取，仍有部分器官因多种原因无法用于移植。这些损耗散落在从获取到移植的各个环节，每一次失误都意味着一位等待者可能错失生机。</p>
+            <p class="fade-in-text">结合临床指南与行业访谈，器官不可利用的原因主要集中在六个方面：医学条件不符、获取过程受限、保存时间过长、运输延误、匹配失效、ICU 条件不足。这些环节的损耗，让部分本可挽救生命的器官，最终未能进入移植流程。</p>
+            <p class="fade-in-text">为了减少运输延误导致的器官浪费，2016 年人体器官捐献绿色通道建立，规定 OPO 在转运人体器官时优先通关、优先承运。中国工程院院士国家肝脏移植质量控制中心主任郑树森在中国司法部官网撰文介绍，<b>该通道建立后，器官转运时间缩短 1-1.5 个小时，器官平均冷缺血时间不同程度下降。</b></p>
+            <p class="fade-in-text">此外，在器官获取与移植环节，国家卫生健康委近年来出台了一系列质量控制标准，在器官获取和移植组织的资质认定、手术开展环境、医疗资源等方面实行全流程控制和评估。</p>
+        </section>
+
+        <div class="content-container fade-in-text" style="max-width: 1000px; padding: 0;">
+            <h2 class="component-title">近十年中国器官移植发展</h2>
+            <p class="component-subtitle">点击年份查看中国器官捐献发展历程</p>
+            <div class="notice-container">
+                <div class="nt-left-panel">
+                    <div class="nt-gear-wrapper">
+                        <div class="nt-gear-filler"></div>
+                        <div class="nt-gear" id="nt-gear">
+                            <div class="nt-gear-center"></div>
+                        </div>
+                    </div>
+                    <div class="nt-title-box">
+                        <div class="nt-title-year" id="nt-display-year"></div>
+                        <div class="nt-title-text" id="nt-display-title"></div>
+                    </div>
+                    <div class="nt-source-note">数据来源：中华人民共和国国家卫生健康委员会；数据收集时间：2025年11月29日</div>
+                </div>
+                <div class="nt-right-panel">
+                    <div class="nt-bubble-box" id="nt-content-bubble">
+                        <div class="nt-scroll-content">
+                            <div class="nt-content-body" id="nt-content-text"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="height: 100px;"></div>
+    </div>
+
+
+    <!-- =========================================
+         第三部分：OPO发展
+         ========================================= -->
+    <div id="part-sec02">
+        <section class="content-header-section">
+            <div class="ch-title-container">
+                <h1 class="ch-title-text">02 | OPO发展：分布不均、协调难度高</h1>
+                <div class="ch-title-reveal">
+                    <span>02 | OPO发展：分布不均、协调难度高</span>
+                </div>
+                <div class="ch-boat-wrapper">
+                    <div class="ch-boat">
+                        <svg viewBox="0 0 100 100">
+                            <path d="M 10,75 L 90,75 L 75,95 L 25,95 Z" />
+                            <path d="M 50,70 L 50,5 L 90,70 Z" />
+                            <path d="M 45,70 L 45,20 L 20,70 Z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="content-container">
+            <div class="fade-in-text">
+                <p>在中国人体器官捐献与移植的“五大工作体系”中，器官获取是至关重要的一环，正是OPO承担着这一环节的主要工作。具体来说，他们的工作内容主要围绕器官获取的<span class="highlight-data">宣传、评估、实施和善后处理</span>等。</p>
+            </div>
+        </div>
+
+        <div class="map-interaction-container fade-in-text">
+            <div class="glass-bubble">
+                <p style="margin:0;">
+                    高质量OPO的分布呈现出“东密西疏、高地集聚”特征。以2023年中国年捐献量排名前20的OPO为例：北京、广东、湖北、山东等医疗资源富集区，凭借多家机构入围形成了强大的“集群优势”——器官捐献与器官移植能力高度挂钩，哪里的大医院多、移植技术强，哪里的捐献动员能力就越强；而广阔的西部地区则呈现“单核支撑”局面，仅依靠陕西、四川等地的顶尖医院辐射带动。这一格局揭示了器官捐献数量与区域经济发展、人口密度及顶尖医疗实力之间的正相关性。
+                </p>
+            </div>
+            <div style="text-align: center;">
+               <iframe src="https://dycharts.com/xshow/index.html?id=c_11bef96bd5681deefd111f0123e8e5da" width="700" height="510" scrolling="no" frameborder="0" align=""></iframe>
+            </div>
+        </div>
+
+        <div class="content-container">
+            <div class="fade-in-text">
+                <p>我国 OPO 体系在近年快速发展。<span class="highlight-data">截至2023年底，中国已经有109个OPO，覆盖中国大陆31个省市自治区。</span>但机构工作人员作为OPO运行的“动力源”却呈现出明显的差异化分布，根据《报告》，将近30%的OPO配置工作人员不足6人，而工作人员多于12人的只有四分之一。 </p>
+                <p>配备充足的工作人员是保障人体捐献器官工作的前提，国家卫健委颁布的《人体器官获取组织基本要求》中明确规定，OPO的人员理论上应该不少于7人。由于执业医师资格和护士执业资格都对报考者的学历及相关专业有明确规定，因此原则上，符合OPO人员配备要求的专职医师和护士不得兼任。而器官捐献协调员则大多由专业能力强的医师或护士转职或者兼任（《护士执业资格考试办法》《中华人民共和国医师法》）。很多OPO受限于地市规模、医疗资源，无法配置符合要求的各类专业工作人员，必然会影响当地的器官获取质量和数量。</p>
+                <p>医疗机构应当为OPO配备专职医师、护士、专业协调员、数据报送员。其中，中、高级专业技术任职资格的医师不少于3人；取得重症监护专业岗位培训证书的执业护士不少于3人；人体器官捐献协调员不少于<span class="highlight-data">3人</span>，经中国人体器官捐献管理中心培训并取得证书开展相关工作；专职从事数据报送的人员不少于<span class="highlight-data">1人</span>。</p>
+            </div>
+        </div>
+
+        <h2 class="component-title fade-in-text">2023年全国捐献量前20的OPO: 运行模式影响OPO绩效</h2>
+        <p class="component-subtitle fade-in-text">数据来源：《中国器官捐献和移植发展报告（2023）》</p>
+
+        <div class="chart-wrapper fade-in-text">
+            <div class="chart-content">
+                <div class="grid-background">
+                    <div class="grid-line" style="left: 0;"><span class="grid-label">0</span></div>
+                    <div class="grid-line" style="left: 14.2%;"><span class="grid-label">50</span></div>
+                    <div class="grid-line" style="left: 28.5%;"><span class="grid-label">100</span></div>
+                    <div class="grid-line" style="left: 42.8%;"><span class="grid-label">150</span></div>
+                    <div class="grid-line" style="left: 57.1%;"><span class="grid-label">200</span></div>
+                    <div class="grid-line" style="left: 71.4%;"><span class="grid-label">250</span></div>
+                    <div class="grid-line" style="left: 85.7%;"><span class="grid-label">300</span></div>
+                    <div class="grid-line" style="left: 100%;"><span class="grid-label">350</span></div>
+                </div>
+                <div class="mode-section group-1">
+                    <div class="mode-header-block">
+                        <div class="header-text-container"><span class="mode-title">模式一</span><span class="mode-desc">全省统一OPO (独立法人)</span></div><span class="mode-total">总量: 105</span>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-name-col">山西省人体器官获取与分配服务中心</div>
+                        <div class="bar-visual-area"><div class="bar" style="width: 30%;"></div><span class="bar-value">105</span></div>
+                    </div>
+                </div>
+                <div class="mode-section group-2">
+                    <div class="mode-header-block">
+                        <div class="header-text-container"><span class="mode-title">模式二</span><span class="mode-desc">全省统一OPO (挂靠医疗机构)</span></div><span class="mode-total">总量: 757</span>
+                    </div>
+                    <div class="bar-row"><div class="bar-name-col">浙江省人体器官获取服务管理中心</div><div class="bar-visual-area"><div class="bar" style="width: 80.8%;"></div><span class="bar-value">283</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">江苏省人体器官获取服务管理中心</div><div class="bar-visual-area"><div class="bar" style="width: 52.2%;"></div><span class="bar-value">183</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">吉林大学第一医院人体器官获取组织</div><div class="bar-visual-area"><div class="bar" style="width: 49.1%;"></div><span class="bar-value">172</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">海南省人体器官获取组织</div><div class="bar-visual-area"><div class="bar" style="width: 34%;"></div><span class="bar-value">119</span></div></div>
+                </div>
+                <div class="mode-section group-3">
+                    <div class="mode-header-block">
+                        <div class="header-text-container"><span class="mode-title">模式三</span><span class="mode-desc">联合OPO</span></div><span class="mode-total">总量: 1234</span>
+                    </div>
+                    <div class="bar-row"><div class="bar-name-col">北部联合体人体器官获取组织</div><div class="bar-visual-area"><div class="bar" style="width: 78.5%;"></div><span class="bar-value">275</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">广东省第一 OPO</div><div class="bar-visual-area"><div class="bar" style="width: 55.4%;"></div><span class="bar-value">194</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">广东省第二 OPO</div><div class="bar-visual-area"><div class="bar" style="width: 52%;"></div><span class="bar-value">182</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">湖南省人体器官获取组织第二组</div><div class="bar-visual-area"><div class="bar" style="width: 46.2%;"></div><span class="bar-value">162</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">南部联合体人体器官获取组织</div><div class="bar-visual-area"><div class="bar" style="width: 41.1%;"></div><span class="bar-value">144</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">青岛大学附属医院联合 OPO</div><div class="bar-visual-area"><div class="bar" style="width: 40.2%;"></div><span class="bar-value">141</span></div></div>
+                </div>
+                <div class="mode-section group-4">
+                    <div class="mode-header-block">
+                        <div class="header-text-container"><span class="mode-title">模式四</span><span class="mode-desc">医疗机构OPO</span></div><span class="mode-total">总量: 1340</span>
+                    </div>
+                    <div class="bar-row"><div class="bar-name-col">广西医科大学第二附属医院 OPO</div><div class="bar-visual-area"><div class="bar" style="width: 76.2%;"></div><span class="bar-value">267</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">西安交通大学第一附属医院 OPO</div><div class="bar-visual-area"><div class="bar" style="width: 68%;"></div><span class="bar-value">238</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">四川大学华西医院人体器官获取组织</div><div class="bar-visual-area"><div class="bar" style="width: 55.4%;"></div><span class="bar-value">194</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">郑州大学第一附属医院 OPO</div><div class="bar-visual-area"><div class="bar" style="width: 45.1%;"></div><span class="bar-value">158</span></div></div>
+                     <div class="bar-row"><div class="bar-name-col">武汉大学中南医院人体器官获取组织</div><div class="bar-visual-area"><div class="bar" style="width: 40%;"></div><span class="bar-value">140</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">河北省人体器官获取组织第二工作组</div><div class="bar-visual-area"><div class="bar" style="width: 38.8%;"></div><span class="bar-value">136</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">华中科技大学同济医学院附属同济医院 OPO</div><div class="bar-visual-area"><div class="bar" style="width: 38.2%;"></div><span class="bar-value">134</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">山东省千佛山医院 OPO</div><div class="bar-visual-area"><div class="bar" style="width: 30.5%;"></div><span class="bar-value">107</span></div></div>
+                    <div class="bar-row"><div class="bar-name-col">解放军北部战区总医院 OPO</div><div class="bar-visual-area"><div class="bar" style="width: 29.1%;"></div><span class="bar-value">102</span></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-container">
+            <div class="fade-in-text">
+                <p>OPO发展情况还受到运行模式的影响。</p>
+                <p>依托大型医院独立运行的“医疗机构OPO”（模式4）以<span class="highlight-data">39%</span>的占比拔得头筹，证明了身处临床一线、快速响应的优势。紧随其后的是“联合OPO”（模式3），占比近<span class="highlight-data">36%</span>，这种打破围墙、强强联合的方式展现了极高的资源整合效率。而以浙江为代表的“全省统一模式”（模式1&2）虽然占比仅约<span class="highlight-data">25%</span>，但凭借集约化的管理，单体贡献力依然惊人。</p>
+                <p>器官捐献协调员则实际参与到器官获取的各项工作中，根据国家卫健委等机构的规定，他们是经红十字会认定的参与人体器官捐献的宣传动员、现场见证、信息采集报告等工作并协助完成人体器官捐献其他相关事务的人员。</p>
+                <p>根据《报告》，2023年中国器官协调员共<span class="highlight-data">2602人</span>，相比14年前的2010年只有34人，已经有了长足的进步。</p>
+                <p>他们最困难也是最重要的工作，是询问病危患者的家属是否愿意捐赠患者的器官。对于处在失去亲人悲痛中的家属来说，这像在剥夺逝者“最后的尊严”，也在分崩他们完整的思念。为了安顿好这份厚重的情感，协调员们需要做更多与器官捐献“无关”的工作：北京友谊医院器官捐献协调员佟鑫在接受新京报采访时分享了一次帮逝者家属操办葬礼的经历，“按照习俗，他们在遗体告别的时候要抱一只公鸡，一家子在北京人生地不熟，只能靠我一整天跑好几个农贸市场才买到公鸡。”</p>
+                <p>为勾勒出器官协调员到底需要做什么、难在哪，我们通过整理新闻周刊、北京晚报等二十余篇报道，绘制了这样一张器官协调员工作画像：</p>
+            </div>
+        </div>     
+
+        <img 
+            src="images/器官协调员词云图.jpg" 
+            alt="器官协调员工作内容词云图" 
+            class="fade-in-text"
+            style="max-width: 90%; height: auto; display: block; margin: 20px auto;"
+        />
+        <div style="height: 100px;"></div>
+    </div>
+
+
+    <!-- =========================================
+         第三部分：供需失衡与希望
+         ========================================= -->
+    <div id="part-sec03">
+        <section class="content-header-section">
+            <div class="ch-title-container">
+                <h1 class="ch-title-text">03 | 供需失衡：地域偏差与结构难题</h1>
+                <div class="ch-title-reveal">
+                    <span>03 | 供需失衡：地域偏差与结构难题</span>
+                </div>
+                <div class="ch-boat-wrapper">
+                    <div class="ch-boat">
+                        <svg viewBox="0 0 100 100">
+                            <path d="M 10,75 L 90,75 L 75,95 L 25,95 Z" />
+                            <path d="M 50,70 L 50,5 L 90,70 Z" />
+                            <path d="M 45,70 L 45,20 L 20,70 Z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="content-container">
+            <p>当器官捐献协调员们在生死之间奔波时，另一端的等待名单正以肉眼可见的速度拉长。</p>
+        </div>
+
+        <div class="map-interaction-container">
+            <div class="glass-bubble">
+                <p style="margin:0;">
+                    2019-2023年，全国器官移植等待者数量从 <strong>8.15万人</strong> 增至 <strong>16.08万人</strong>，5年间近乎翻倍，而2023年1.08万例捐献、2.39万例移植手术的规模，显然难以填补日益扩大的供需缺口。
+                    <br><br>
+                    这份缺口的背后，是需求端<strong>“总量激增、结构失衡、地区分化”</strong>的鲜明特征。
+                </p>
+            </div>
+            <div class="flourish-embed flourish-chart" data-src="visualisation/26534312">
+                <script src="https://public.flourish.studio/resources/embed.js"></script>
+                <noscript><img src="https://public.flourish.studio/visualisation/26534312/thumbnail" width="100%" alt="chart visualization" /></noscript>
+            </div>
+        </div>
+
+        <div class="content-container">
+            <p class="fade-in-text">器官移植等待压力在不同器官间呈现出较大的差异。在所有等待移植的器官中，肾脏的需求始终占据主导。</p>
+            <p class="fade-in-text">肾脏与肝脏需求量大，供需比长期高位，患者需等待数年。而心脏、肺脏的等待时间相对短，但对器官质量和时效性要求极高。一旦匹配成功，留给专业团队执行手术的黄金时间往往只有4到8个小时。</p>
+        </div>
+
+        <div class="ratio-panel-wrapper fade-in-text">
+            <div class="rp-left">
+                <div class="chart-internal-title">2015-2023年全国各器官（肝、肾、心、肺）移植例数及移植与等待比</div>
+                <div class="flourish-embed flourish-chart" data-src="visualisation/26652982">
+                    <script src="https://public.flourish.studio/resources/embed.js"></script>
+                    <noscript><img src="https://public.flourish.studio/visualisation/26652982/thumbnail" width="100%" alt="chart visualization" /></noscript>
+                </div>
+                <div class="chart-internal-source">
+                    数据说明：数据来源：2015-2023年《中国器官移植发展报告》<br>
+                    统计时间： 2025年11月30日
+                </div>
+            </div>
+            <div class="rp-right">
+                <div class="chart-internal-title">2023年各器官（肝、肾、心、肺）移植等待者与移植例数数量比</div>
+                <div class="organ-selector">
+                    <div class="os-btn" data-organ="kidney" data-ratio="9.00">肾脏</div>
+                    <div class="os-btn" data-organ="liver" data-ratio="3.17">肝脏</div>
+                    <div class="os-btn" data-organ="heart" data-ratio="3.17">心脏</div>
+                    <div class="os-btn" data-organ="lung" data-ratio="1.70">肺脏</div>
+                </div>
+                <div class="anim-stage">
+                    <div class="placeholder-hint" id="hint">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <span>请悬停或点击上方器官<br>查看写实数据可视化</span>
+                    </div>
+                    <div class="active-content" id="content">
+                        <div class="icon-box" id="icon-box"></div>
+                        <div class="ratio-text-group">
+                            <div class="ratio-desc">Waiting vs Transplant</div>
+                            <div class="ratio-big"><span id="val-ratio">0.00</span> : <span style="color:var(--morandi-blue)">1</span></div>
+                        </div>
+                        <div class="bars-container">
+                            <div class="bar-group">
+                                <div class="bar-val" style="color:var(--morandi-blue)">1</div>
+                                <div class="bar-visual transplant" style="height:25px;"></div>
+                                <div class="bar-label">移植</div>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar-val" id="val-wait" style="color:var(--morandi-pink)">0</div>
+                                <div class="bar-visual waiting" id="bar-wait"></div>
+                                <div class="bar-label">等待</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-container">
+            <p class="fade-in-text">
+                2019年，全国肾脏移植等待者仅6.5万人，到2023年已飙升至 <span class="highlight-data">13.4万人</span>，十年间增长幅度达106%，相当于每天新增约19位肾脏等待者，而肾脏等待者的数量与移植的案例数比例达到惊人的 <strong class="highlight-data">9:1</strong>。
+            </p>
+            <p class="fade-in-text">
+                相比之下，其他器官的等待规模则小得多：肝脏等待者数量从2015年的6008人增至2023年的 <span class="highlight-data">2.19万人</span>，规模仅为肾脏的1/6；心脏等待者数量缓慢攀升，2023年达到约3182人；肺脏等待者最少，同期约1634人。这种悬殊的结构，既与慢性肾病发病率上升相关，也反映出不同器官移植技术普及度的差异。[1]
+            </p>
+            <p class="fade-in-text">
+                而在2023年一年中，我国共完成器官捐献10778例，完成器官移植手术23905例，获取器官利用率为 <span class="highlight-text">96.55%</span>。如果这一利用率提升一个百分点，那么背后就能多有 <span class="highlight-data">两百多条鲜活的生命</span> 得以被重新点燃。而实际上，2023年的器官利用率甚至低于2022年的器官利用率（96.74%）。
+            </p>
+        </div>
+
+        <div class="content-container">
+            <div class="chart-container fade-in-text">
+                <iframe src='https://flo.uri.sh/visualisation/26534664/embed' title='Interactive or visual content' class='flourish-embed-iframe' frameborder='0' scrolling='no' style='width:100%;height:600px;' sandbox='allow-same-origin allow-forms allow-scripts allow-downloads allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation'></iframe>
+            </div>
+            <p class="fade-in-text">
+                从2023年末各省等待者数据来看，肾脏等待者数量呈现<span class="highlight-text">“头部断层”</span>，且地域间的差距同样触目惊心。
+            </p>
+            <p class="fade-in-text">
+                左侧肾脏的分支（76,602人）几乎占据了等待者总量的“半壁江山”，而它的流向高度集中在浙江、广东，两省加起来接近3万人，是湖南、河南等人口大省的3倍左右，与后续省份形成了一眼可见的差距。
+            </p>
+            <p class="fade-in-text">
+                而从侧面省份可见，医疗资源决定了等待者们的流向偏好：肝脏（6,593人）、心脏（1,260人）、肺脏（325人）的等待者数量虽少，但流向同样集中：四川是肝脏等待者的主要聚集地，上海、北京则成了心、肺等待者的核心登记地。
+            </p>
+            <p class="fade-in-text">
+                这些地区，恰恰是国内医疗资源最密集的区域。这种分布差异，是人口规模与医疗资源可及性的叠加结果——经济发达地区不仅人口密度高，也更易吸引周边患者前往就医，需要器官移植的患者通常在就医医院的移植中心登记需求，从而进一步推高了当地的等待人数。
+            </p>
+        </div>
+
+        <div class="interactive-section" id="interactiveApp">
+            <div class="particles-container" id="particles"></div>
+            <div class="river-wrapper" id="river">
+                <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+                    <defs><path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" /></defs>
+                    <g class="parallax">
+                        <use xlink:href="#gentle-wave" x="48" y="0" />
+                        <use xlink:href="#gentle-wave" x="48" y="3" />
+                        <use xlink:href="#gentle-wave" x="48" y="5" />
+                    </g>
+                </svg>
+            </div>
+            <div class="interactive-container">
+                <div class="quote-section" id="quoteSection">
+                    <div class="quote-text">“如果说生死之间是一条河，<br>我们就是这河上的摆渡人。”</div>
+                    <div class="author">—— 刘永光 · 器官捐献协调员</div>
+                    <div class="river-track" id="track">
+                        <div class="boat-container" id="boat">
+                            <div class="boat-success-glow" id="boatGlow"></div>
+                            <svg class="boat-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L2 22H22L12 2ZM12 6.5L17.5 18H6.5L12 6.5Z" fill="currentColor" fill-opacity="0.3"/>
+                                <path d="M12 2L12 18L18 19L12 2Z" fill="currentColor"/> 
+                                <path d="M4 20L12 22V19L4 20Z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="instruction">拖拽小船 · 抵达彼岸</div>
+                </div>
+                <div class="content-section" id="contentSection">
+                    <p class="main-text">
+                        而要让更多等待者顺利渡过这条河，<br>
+                        不仅需要摆渡人的坚守，<br>
+                        更需要 <span class="highlight-text-final">体系的完善</span>、<span class="highlight-text-final">资源的均衡</span>、<span class="highlight-text-final">社会的支持</span>。<br><br>
+                        当等待名单的长度不再无限拉长，<br>
+                        当器官浪费率降至最低，<br>
+                        这份“生命的延续”才能真正照亮每一个角落。
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="footer-section">
+            <div class="footer-wrapper">
+                <div class="ref-section">
+                    <div class="ref-title">参考文献</div>
+                    <ul class="ref-list">
+                        <li>中国器官移植发展基金会. (2023). 中国器官移植发展报告（2015-2023）.</li>
+                        <li>关于印发《人体器官捐献协调员管理办法》的通知. <a href="https://www.redcross.org.cn/html/2021-05/78447.html" target="_blank">https://www.redcross.org.cn/html/2021-05/78447.html</a></li>
+                        <li>国家卫生健康委《人体器官获取组织基本要求》. <a href="https://www.nhc.gov.cn/wjw/c100175/201903/16cce1d51ef9430aac163e81180c3d50.shtml" target="_blank">https://www.nhc.gov.cn/wjw/c100175/201903/16cce1d51ef9430aac163e81180c3d50.shtml</a></li>
+                        <li>《中华人民共和国医师法》第二章《考试和注册》.</li>
+                        <li>《护士执业资格考试办法》，2010 年 5 月 10 日卫生部、人力资源和社会保障部令第 74号发布.</li>
+                        <li>谢良波,夏秋翔,曾宪鹏,彭景涛,李恒,肖瀚宇... & 王振迪. (2020). 《移植器官质量与安全指南（第6版）》解读——供者及器官的评估和选择标准. 器官移植, 11 (04), 487-491.</li>
+                        <li>董建辉,刘旭阳,王洪良,廖吉祥,杨东阁,苏庆东... & 孙煦勇. (2020). 《移植器官质量与安全指南（第6版）》解读——潜在供者的识别与转介. 器官移植, 11 (03), 395-399.</li>
+                        <li>施辉波, 王心强, 徐晶, 曾梦君, 李小勤, 张利民 &  蒋继贫. (2020). 《移植器官质量与安全指南（第6版）》解读——器官的获取、保存和运输. 器官移植, 11 (02), 276-281.</li>
+                        <li>司晶,黄伟,谷雨,严碧波,徐哲,李志军... & 叶啟发. (2015). 中国公民逝世后器官捐献者家属捐献意愿影响因素分析. 中华移植杂志(电子版), 9 (04), 174-177.</li>
+                        <li>霍枫 & 齐海智. (2019). 中国公民逝世后器官捐献流程和规范(2019版). 器官移植, 10 (02), 122-127.</li>
+                        <li>曹凯 & 刘敏. (2017). 器官捐献与移植的“中国模式”. 中国医院院长, (15), 26-27.</li>
+                        <li>陈国振,任莉,薛武军.器官捐献协调员人格类型分析[J].中华移植杂志(电子版),2020,14(01):32-35.</li>
+                        <li>王海波, 史赢, 周稚烨, 等.  2019年中国器官捐献与移植等待现状分析 [J] . 中华器官移植杂志, 2021, 42(6) : 324-325. DOI: 10.3760/cma.j.cn421203-20210108-00014.</li>
+                        <li>中国新闻网 2025-5-8《对话人体器官捐献协调员：“生命摆渡人”书写爱的延续》.</li>
+                        <li>潮新闻 2025-4-4《器官捐献协调员何炯：14年奔走在生死间的“摆渡人”》.</li>
+                        <li>羊城派 2024-4-4《器官协调员：做生命接力的“摆渡人”》.</li>
+                        <li>中国人体器官捐献 2024-4-4《人体器官捐献协调员汪敏：他们的生命，我们的使命》.</li>
+                        <li>瞭望 2022-6-14《器官捐献协调员：在生死之间摆渡》.</li>
+                        <li>探针News 2024-6-12 《器官捐献协调员，穿行在悲伤和新生之间》.</li>
+                    </ul>
+                </div>
+
+                <div class="credits-section">
+                    <p>本作品为中国人民大学2025年秋季《数据新闻》课程作业</p>
+                    <div class="team-info">
+                        <p>数据收集：许多 柯雨彤 毛允</p>
+                        <p>可视化：许多 柯雨彤 毛允</p>
+                        <p>文案：许多 柯雨彤 毛允</p>
+                        <p>美编：许多 柯雨彤 毛允</p>
+                        <p>指导老师：中国人民大学新闻学院 方洁教授</p>
+                        <p>作者邮箱：<a href="mailto:luvlink@ruc.edu.cn">luvlink@ruc.edu.cn</a></p>
+                    </div>
+                    <div class="final-thanks">感谢你看到这里</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- =========================================
+         SCRIPTS
+         ========================================= -->
+
+    <!-- 1. 封面脚本 -->
+    <script>
+        (function() {
+            const meteorContainer = document.getElementById('meteors-container');
+            if(meteorContainer) {
+                function spawnMeteor() {
+                    const meteor = document.createElement('div');
+                    meteor.classList.add('meteor');
+                    const startX = Math.random() * 60 + 40; 
+                    const startY = Math.random() * 50 - 10; 
+                    meteor.style.left = startX + '%';
+                    meteor.style.top = startY + '%';
+                    const duration = Math.random() * 1.5 + 2.5 + 's'; 
+                    meteor.style.animation = `meteor-slide ${duration} ease-out forwards`;
+                    meteorContainer.appendChild(meteor);
+                    setTimeout(() => { meteor.remove(); }, 4000);
+                }
+                function loopMeteors() {
+                    spawnMeteor();
+                    const nextDelay = Math.random() * 2200 + 800; 
+                    setTimeout(loopMeteors, nextDelay);
+                }
+                setTimeout(loopMeteors, 500);
+            }
+
+            const particleContainer = document.getElementById('particles-container');
+            if(particleContainer) {
+                function createAmbientParticles() {
+                    const particleCount = 20;
+                    for (let i = 0; i < particleCount; i++) {
+                        const p = document.createElement('div');
+                        p.style.position = 'absolute';
+                        p.style.width = Math.random() * 2 + 1 + 'px';
+                        p.style.height = p.style.width;
+                        p.style.background = 'rgba(255,255,255,0.3)';
+                        p.style.borderRadius = '50%';
+                        p.style.left = Math.random() * 100 + '%';
+                        p.style.top = Math.random() * 100 + '%';
+                        p.style.filter = 'blur(1px)';
+                        p.style.animation = `float ${Math.random() * 10 + 10}s linear infinite`;
+                        particleContainer.appendChild(p);
+                    }
+                }
+                const styleSheet = document.createElement("style");
+                styleSheet.innerText = `
+                    @keyframes float {
+                        0% { transform: translateY(0) translateX(0); opacity: 0; }
+                        50% { opacity: 0.5; }
+                        100% { transform: translateY(-100px) translateX(${Math.random()*50-25}px); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(styleSheet);
+                createAmbientParticles();
+            }
+        })();
+    </script>
+
+    <!-- 2. 全局文字浮现 -->
+    <script>
+        (function() {
+            const textObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 }); 
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelectorAll('.fade-in-text').forEach(el => textObserver.observe(el));
+            });
+        })();
+    </script>
+
+    <!-- 3. Sec01 脚本 -->
+    <script>
+        (function() {
+            // Flowchart Logic
+            const container = document.getElementById('timeline');
+            const svgPath = document.getElementById('road-path');
+            const car = document.getElementById('ambulance-car');
+            const steps = document.querySelectorAll('.step-card');
+            
+            function drawPath() {
+                if(!container || !svgPath) return;
+                const containerRect = container.getBoundingClientRect();
+                const containerWidth = container.offsetWidth;
+                const containerHeight = container.offsetHeight;
+                let pathString = "";
+                let startX = containerWidth / 2;
+                let startY = 0;
+                pathString += `M ${startX} ${startY} `;
+                steps.forEach((step) => {
+                    const stepTop = step.offsetTop;
+                    const stepLeft = step.offsetLeft;
+                    const stepWidth = step.offsetWidth;
+                    let targetX, targetY;
+                    if (step.classList.contains('left')) { targetX = stepLeft + stepWidth + 20; } 
+                    else { targetX = stepLeft - 20; }
+                    targetY = stepTop + 20;
+                    const midY = (startY + targetY) / 2;
+                    pathString += `C ${startX} ${midY}, ${targetX} ${midY}, ${targetX} ${targetY} `;
+                    startX = targetX; startY = targetY;
+                });
+                pathString += `L ${startX} ${containerHeight}`;
+                svgPath.setAttribute('d', pathString);
+                car.style.display = 'block';
+            }
+
+            function moveCar() {
+                const path = document.getElementById('road-path');
+                if (!path || path.getAttribute('d') === "") return;
+                const pathLen = path.getTotalLength();
+                const rect = container.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                let relativeY = windowHeight * 0.5 - rect.top;
+                let progress = relativeY / (rect.height * 0.9);
+                progress = Math.max(0, Math.min(1, progress));
+                const point = path.getPointAtLength(progress * pathLen);
+                const pointAhead = path.getPointAtLength(Math.min(progress * pathLen + 5, pathLen));
+                const dx = pointAhead.x - point.x;
+                const dy = pointAhead.y - point.y;
+                const angleRad = Math.atan2(dy, dx);
+                let angleDeg = angleRad * 180 / Math.PI;
+                let transformStr = `translate(${point.x - 50}px, ${point.y - 50}px) `;
+                if (dx >= 0) { transformStr += `scaleX(-1) rotate(${-angleDeg}deg)`; } 
+                else {
+                    let tilt = angleDeg;
+                    if (angleDeg > 90) tilt = angleDeg - 180;
+                    if (angleDeg < -90) tilt = angleDeg + 180;
+                    transformStr += `scaleX(1) rotate(${tilt}deg)`;
+                }
+                car.style.transform = transformStr;
+            }
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
+            }, { threshold: 0.15 });
+            steps.forEach(step => observer.observe(step));
+
+            window.addEventListener('load', () => { drawPath(); moveCar(); });
+            window.addEventListener('scroll', () => { requestAnimationFrame(moveCar); });
+            window.addEventListener('resize', drawPath);
+
+            // Poker Logic
+            const iconPaths = {
+                general: `<path d="M12 2L4 12h16L12 2zm0 4l3 4H9l3-4z M12 14c-1.1 0-2 .9-2 2v2H2v-2c0-1.1.9-2 2-2h2c1.1 0 2 .9 2 2v2h2v-2c0-1.1.9-2 2-2h2c1.1 0 2 .9 2 2v2h8v-2c0-1.1-.9-2-2-2h-2c-1.1 0-2 .9-2 2v2h-2v-2c0-1.1-.9-2-2-2z"/>`,
+                liver: `<path d="M16 4c-3 0-5 2-6 4-1-2-3-4-6-4-3 0-4 3-4 5 0 6 9 13 10 13s10-7 10-13c0-2-1-5-4-5z"/>`, 
+                kidney: `<path d="M7 6c-2.8 0-5 2.2-5 5s2.2 5 5 5 2-1 3-3c1 2 3 3 5 3 2.8 0 5-2.2 5-5s-2.2-5-5-5c-2 0-4 1-5 3-1-2-3-3-3-3z"/>`,
+                heart: `<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>`,
+                lung: `<path d="M7 4c-2.2 0-4 1.8-4 4v7c0 2.2 1.8 4 4 4h2c2.2 0 4-1.8 4-4V8c0-2.2-1.8-4-4-4H7zm10 0c-2.2 0-4 1.8-4 4v7c0 2.2 1.8 4 4 4h2c2.2 0 4-1.8 4-4V8c0-2.2-1.8-4-4-4h-2z"/>`
+            };
+            const cardsData = [
+                { title: "总体原则与实施目标", iconKey: "general", content: `<ul><li>全国统一按“医疗需要、公平公开”原则分配肝、肾、心、肺。</li><li>用计算机系统分配，避免浪费，优先保障急需患者。</li><li>目标是降低等待者死亡风险，提高移植后存活率。</li><li>所有移植医院都要遵守，接受卫生健康部门监管。</li></ul>` },
+                { title: "肝脏分配核心规则", iconKey: "liver", content: `<ul><li>按病情紧急程度和等待时间排序，越危重、等得越久越优先。</li><li>血型要匹配，12岁以下儿童捐献肝优先给同龄孩子。</li><li>捐献者亲属、登记捐献满3年的志愿者有优先权。</li><li>病情变化要及时更新信息，否则会影响排序。</li></ul>` },
+                { title: "肾脏分配核心规则", iconKey: "kidney", content: `<ul><li>主要看等待时间，成人算透析起始时间，孩子算入名单时间。</li><li>血型要匹配，会考虑身体适配度和是否容易过敏等情况。</li><li>捐献者亲属、登记捐献满3年的志愿者可优先。</li><li>不适合移植时会暂时冻结名额，条件达标后可恢复。</li></ul>` },
+                { title: "心脏分配核心规则", iconKey: "heart", content: `<ul><li>按病情紧急程度排序，靠器械维持生命的患者优先。</li><li>血型基本要匹配，18岁以下儿童捐献心优先给同龄孩子。</li><li>捐献者亲属、登记捐献满3年的志愿者有优先权。</li><li>信息要及时更新，逾期未更会降低优先级。</li></ul>` },
+                { title: "肺脏分配核心规则", iconKey: "lung", content: `<ul><li>按病情紧急程度评分，分数越高、等得越久越优先。</li><li>血型必须匹配，儿童/青少年捐献肺优先给同龄孩子。</li><li>捐献者亲属、登记捐献满3年的志愿者可优先。</li><li>病情稳定后可冻结名额，后续符合条件再解冻。</li></ul>` }
+            ];
+            const pContainer = document.getElementById('poker-container');
+            const pOverlay = document.getElementById('pk-overlay');
+            const smallIconSvg = `<svg class="pk-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/><path d="M7 11h2l2-3 2 6 2-3h2" stroke="#fff" stroke-width="2" fill="none"/></svg>`;
+            
+            if(pContainer) {
+                cardsData.forEach((data, index) => {
+                    const card = document.createElement('div'); card.className = 'pk-card';
+                    const pathData = iconPaths[data.iconKey] || iconPaths['general'];
+                    const bgSvg = `<svg class="pk-bg-icon" viewBox="0 0 24 24">${pathData}</svg>`;
+                    card.innerHTML = `<div class="pk-header">${smallIconSvg}<div class="pk-title">${data.title}</div></div><div class="pk-content">${data.content}</div>${bgSvg}`;
+                    const angle = -30 + (index * 15); const xOffset = (index - 2) * 35; const yOffset = Math.abs(index - 2) * 15;
+                    card.style.left = `calc(50% + ${xOffset}px)`; card.style.top = `${20 + yOffset}px`; card.style.transform = `translateX(-50%) rotate(${angle}deg)`; card.style.zIndex = index + 1;
+                    card.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (card.classList.contains('active')) { closeAllCards(); } 
+                        else { document.querySelectorAll('.pk-card').forEach(c => c.classList.remove('active')); card.classList.add('active'); pOverlay.classList.add('show'); }
+                    });
+                    pContainer.appendChild(card);
+                });
+                pOverlay.addEventListener('click', closeAllCards);
+            }
+            function closeAllCards() { document.querySelectorAll('.pk-card').forEach(c => c.classList.remove('active')); pOverlay.classList.remove('show'); }
+
+            // Notice Logic
+            const nData = [
+                { year: 2016, title: "关于建立人体捐献器官转运绿色通道的通知", content: `<div><span class="nt-section-title">（一）快速通关。</span><p>OPO 通过公路转运人体捐献器官时，优先通过收费公路收费站。到达机场、车站后，OPO 工作人员优先办理乘机、乘车手续，并优先通过安全检查，实现快速登机或乘车。</p></div><div><span class="nt-section-title">（二）优先承运。</span><p>通过民航飞机运输时，如出现飞机晚点或流量控制等情况，民航部门可协调承运人体捐献器官的航班优先起飞，误点时优先安排临近航班。</p><p>通过铁路运输时，如出现误点情况，铁路部门可优先安排临近车次，必要时可登车后补票。</p></div><div><span class="nt-section-title">（三）建立协调机制。</span><p>国家卫生计生委会同公安部、交通运输部、民航局、铁路总公司、中国红十字会总会等有关部门和单位建立人体捐献器官转运绿色通道的协调机制，统筹协调并指导落实相关工作，设立人体捐献器官转运绿色通道 24 小时应急电话，落实工作要求，保障人体捐献器官转运绿色通道便捷、畅通。</p></div>` },
+                { year: 2019, title: "《人体器官获取组织基本要求和质量控制指标》", content: `<p>《基本要求》进一步明确了医疗机构成立 OPO 在医疗机构方面、人员方面和技术管理方面的基本要求，并且对相应条件进行了细化规定。</p><p>《质控指标》发布了 OPO 九项质量控制指标，这些质控指标反映了 OPO 器官捐献与器官获取工作、器官捐献者维护、获取器官质量评估等技术和管理能力，体现 OPO 工作全流程质量控制情况。</p>` },
+                { year: 2025, title: "《器官移植病区医院感染预防与控制标准》", content: `<p>规定了器官移植病区医院感染预防与控制管理要求、布局与设施、移植患者安置、医院感染监测和移植受体感染预防。</p>` }
+            ];
+            const gear = document.getElementById('nt-gear');
+            const displayYear = document.getElementById('nt-display-year');
+            const displayTitle = document.getElementById('nt-display-title');
+            const contentBubble = document.getElementById('nt-content-bubble');
+            const contentText = document.getElementById('nt-content-text');
+            const radius = 100; const centerX = 130; const centerY = 130;
+            let animationTimeout = null;
+
+            if(gear) {
+                nData.forEach((item, index) => {
+                    const btn = document.createElement('div'); btn.className = 'nt-year-point'; btn.innerText = item.year;
+                    const angle = index * 120; const rad = angle * (Math.PI / 180);
+                    const x = centerX + radius * Math.cos(rad) - 30; const y = centerY + radius * Math.sin(rad) - 30;
+                    btn.style.left = `${x}px`; btn.style.top = `${y}px`;
+                    btn.onclick = (e) => { e.stopPropagation(); rotateTo(index); };
+                    gear.appendChild(btn);
+                });
+                rotateTo(0);
+            }
+
+            function rotateTo(index) {
+                if(animationTimeout) clearTimeout(animationTimeout);
+                contentBubble.classList.remove('show'); displayTitle.style.opacity = 0.5;
+                const targetRotation = -(index * 120);
+                gear.style.transform = `rotate(${targetRotation}deg)`;
+                const buttons = document.querySelectorAll('.nt-year-point');
+                buttons.forEach((btn, i) => {
+                    const isActive = (i === index);
+                    if(isActive) btn.classList.add('active'); else btn.classList.remove('active');
+                    const scale = isActive ? 1.3 : 1;
+                    btn.style.transform = `rotate(${-targetRotation}deg) scale(${scale})`;
+                });
+                animationTimeout = setTimeout(() => { updateContent(index); }, 1200);
+            }
+
+            function updateContent(index) {
+                const item = nData[index];
+                displayYear.innerText = item.year; displayTitle.innerText = item.title; contentText.innerHTML = item.content;
+                document.querySelector('.nt-scroll-content').scrollTop = 0; displayTitle.style.opacity = 1; contentBubble.classList.add('show');
+            }
+        })();
+    </script>
+
+    <!-- 4. Sec03 脚本 -->
+    <script>
+        (function() {
+            // Ratio Panel Logic
+            const btns = document.querySelectorAll('.os-btn');
+            const hint = document.getElementById('hint');
+            const content = document.getElementById('content');
+            const iconBox = document.getElementById('icon-box');
+            const valRatio = document.getElementById('val-ratio');
+            const valWait = document.getElementById('val-wait');
+            const barWait = document.getElementById('bar-wait');
+            const svgs = {
+                kidney: `<path d="M7 6c-3 0-5.5 2.5-5.5 5.5s2.5 5.5 5.5 5.5c1.5 0 2.5-1 3.5-2.5 1 1.5 2 2.5 3.5 2.5 3 0 5.5-2.5 5.5-5.5s-2.5-5.5-5.5-5.5c-2 0-3.5 1.5-4 3 -.5-1.5-2-3-3-3z"/>`,
+                liver: `<path d="M19 6c-3-1-6-1-9 1-4 2-6 6-6 10 2 0 4-1 6-2 2-1 4-1 6-1 3 0 5-3 5-6 0-1-1-2-2-2z M8 13c1 0 2 .5 3 1"/>`,
+                heart: `<path d="M12 4c1 0 2.5.5 3 1.5 1-1 3-2 5-1 3 1 3 5 2 7-2 4-6 8-10 10 -4-2-8-6-10-10 -1-2-1-6 2-7 2-1 4 0 5 1 .5-1 2-1.5 3-1.5z M12 4v6 M8 7c1 1 2 1 3 0"/>`,
+                lung: `<path d="M7 4c-3 0-5 3-5 7 0 5 3 9 5 9 1 0 2-2 2-4V8c0-2-1-4-2-4z M17 4c-1 0-2 2-2 4v8c0 2 1 4 2 4 2 0 5-4 5-9 0-4-2-7-5-7z M12 6v10"/>`
+            };
+            let frameId;
+
+            if(btns.length > 0) {
+                btns.forEach(btn => {
+                    btn.addEventListener('mouseenter', function() {
+                        btns.forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        hint.style.display = 'none'; content.style.display = 'flex';
+                        const organ = this.getAttribute('data-organ');
+                        const ratio = parseFloat(this.getAttribute('data-ratio'));
+                        iconBox.innerHTML = `<svg viewBox="0 0 24 24">${svgs[organ]}</svg>`;
+                        iconBox.classList.remove('show'); void iconBox.offsetWidth; iconBox.classList.add('show');
+                        animateChart(ratio);
+                    });
+                });
+            }
+
+            function animateChart(targetRatio) {
+                let pxPerUnit = 25;
+                if(targetRatio * pxPerUnit > 130) pxPerUnit = 130 / targetRatio;
+                const waitHeight = pxPerUnit * targetRatio;
+                document.querySelector('.bar-visual.transplant').style.height = pxPerUnit + 'px';
+                if(frameId) cancelAnimationFrame(frameId);
+                barWait.style.transition = 'none'; barWait.style.height = '0px';
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        barWait.style.transition = 'height 1s cubic-bezier(0.22, 1, 0.36, 1)';
+                        barWait.style.height = waitHeight + 'px';
+                        animateNumber(valRatio, targetRatio); animateNumber(valWait, targetRatio);
+                    });
+                });
+            }
+            function animateNumber(el, end) {
+                let start=null; const dur=1000;
+                function step(ts) {
+                    if(!start) start=ts;
+                    const prog=Math.min((ts-start)/dur,1);
+                    el.innerText=( (1-Math.pow(1-prog,3))*end ).toFixed(2);
+                    if(prog<1) requestAnimationFrame(step); else el.innerText=end.toFixed(2);
+                }
+                requestAnimationFrame(step);
+            }
+
+            // Finale Boat Logic
+            const container = document.getElementById('interactiveApp');
+            const boat = document.getElementById('boat');
+            const track = document.getElementById('track');
+            const boatGlow = document.getElementById('boatGlow');
+            const quoteSection = document.getElementById('quoteSection');
+            const contentSection = document.getElementById('contentSection');
+            const river = document.getElementById('river');
+            const particlesContainer = document.getElementById('particles');
+            let isDragging = false, currentX = 0, maxX = 0, completed = false;
+
+            if(track && boat) {
+                function update() { if(track && boat) maxX = track.offsetWidth - boat.offsetWidth; }
+                window.addEventListener('resize', update); setTimeout(update, 500);
+
+                const start = (e) => { if(completed) return; isDragging = true; boat.style.transition = 'none'; boat.style.cursor = 'grabbing'; };
+                const move = (e) => {
+                    if (!isDragging || completed) return;
+                    if (e.type === 'touchmove') e.preventDefault();
+                    const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                    const rect = track.getBoundingClientRect();
+                    let x = clientX - rect.left - (boat.offsetWidth/2);
+                    if (x < 0) x = 0; if (x > maxX) x = maxX;
+                    currentX = x; boat.style.transform = `translateY(-50%) translateX(${x}px)`;
+                };
+                const end = () => {
+                    if (!isDragging || completed) return;
+                    isDragging = false; boat.style.cursor = 'grab';
+                    if (currentX / maxX > 0.85) {
+                        completed = true;
+                        boat.style.transition = 'transform 0.4s ease-out';
+                        boat.style.transform = `translateY(-50%) translateX(${maxX}px)`;
+                        boatGlow.classList.add('glow-active');
+                        setTimeout(() => {
+                            quoteSection.classList.add('fade-out'); river.classList.add('river-recede');
+                            setTimeout(() => { generateLightParticles(); contentSection.classList.add('visible'); }, 800);
+                        }, 600);
+                    } else {
+                        boat.style.transition = 'transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)'; 
+                        boat.style.transform = `translateY(-50%) translateX(0px)`; currentX = 0;
+                    }
+                };
+                function generateLightParticles() {
+                    const colors = ['#88b3c8', '#d98d94', '#eebb4d'];
+                    for(let i=0; i<50; i++) {
+                        const p = document.createElement('div'); p.classList.add('particle', 'light-theme');
+                        const size = Math.random() * 8 + 4; p.style.width = size + 'px'; p.style.height = size + 'px';
+                        p.style.left = Math.random() * 100 + '%'; p.style.top = (80 + Math.random() * 20) + '%';
+                        p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        const dur = Math.random() * 5 + 5; const delay = Math.random() * 2;
+                        p.style.animation = `particleFloat ${dur}s ease-out ${delay}s infinite`;
+                        particlesContainer.appendChild(p);
+                    }
+                }
+                boat.addEventListener('mousedown', start); window.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
+                boat.addEventListener('touchstart', start, {passive: false}); window.addEventListener('touchmove', move, {passive: false}); window.addEventListener('touchend', end);
+            }
+        })();
+    </script>
+</body>
+</html>
